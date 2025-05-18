@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Plainte\EnvoyePlainteRequest;
 use Illuminate\Http\Request;
 use App\Models\Plainte;
-use Illuminate\Supporte\Str;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class PlainteController extends Controller
 {
@@ -37,8 +38,8 @@ public function envoyePlainte(EnvoyePlainteRequest $request)
         $plainte->details = $request->details;
         $plainte->adresse = $request->adresse;
         $plainte->commune = $request->commune;
-        $plainte->examen = "Non examinee";
-        $plainte->code =genererCode();
+        $plainte->examiner = "Non examinee";
+        $plainte->code =PlainteController::genererCode();
 
         $plainte->save();
 
@@ -50,66 +51,61 @@ public function envoyePlainte(EnvoyePlainteRequest $request)
     }
 }
 
-
-//    public function recuperePlainte(){
-//     $plaintes = Plainte::with('user:id,name,tel')
-//         ->select('id', 'details', 'commune', 'image', 'adresse','examen', 'user_id')
-//         ->get();
-
-//     // Formatter la réponse pour retourner uniquement les champs voulus
-//     $formatted = $plaintes->map(function ($plainte) {
-//         return [
-//             'details'   => $plainte->details,
-//             'commune'   => $plainte->commune,
-//             'examen'   =>$plainte->examen, 
-//             'image'     => $plainte->image,
-//             'adresse'   => $plainte->adresse,
-//             'user_name' => $plainte->user->name ?? null,
-//             'telephone' => $plainte->user->tel ?? null,
-//         ];
-//     });
-
-//     return response()->json($formatted);
-//    }
-
 public function recuperePlainte(){
-    // // Récupérer l'utilisateur connecté
+    // Récupérer l'utilisateur connecté
     $user = auth()->user();
-    // Filtrer les plaintes où la commune est égale à celle de l'utilisateur connecté
+    // Filtrer les plaintes où la commune est égale à celle de l'utilisateur connecté et plainte non examinee
     $plaintes = Plainte::with('user:id,name,tel')
          ->where('commune', $user->commune)
-        ->where('examen', 'non examinee')
-        ->select('id', 'details', 'commune',"code", 'image', 'adresse', 'examen', 'user_id')
+        ->where('examiner', 'non examinee')
+        ->select('id', 'details', 'commune',"code", 'image', 'adresse', 'examiner', 'user_id')
         ->get();
-
-    // Formatter la réponse pour retourner uniquement les champs voulus
+ // Formatter la réponse pour retourner uniquement les champs voulus
     $formatted = $plaintes->map(function ($plainte) {
         return [
             'details'   => $plainte->details,
             'commune'   => $plainte->commune,
-            'examen'    => $plainte->examen, 
+            'examiner'    => $plainte->examiner, 
             'image'     => $plainte->image,
             'adresse'   => $plainte->adresse,
             'user_name' => $plainte->user->name ?? null,
             'telephone' => $plainte->user->tel ?? null,
         ];
     });
-
     return response()->json($formatted);
 }
 
-public function afficher(){
-    $plaintes=Plainte::all(['id','details', 'user_id','adresse','image','examen']);
-    return response()->json($plaintes);
+public function afficherPlainte(){
+ // Récupérer l'utilisateur connecté
+    $user = auth()->user();
+    $plaintes = Plainte::all(['id','details', 'user_id','adresse','image','examiner','commune','created_at'])
+        ->map(function ($plainte) {
+            $plainte->created_at = Carbon::parse($plainte->created_at)->format('Y-m-d'); // Convertit en chaîne
+            return $plainte;
+        });
+   return response()->json($plaintes, 200, [], JSON_UNESCAPED_SLASHES);
 }
 
-public function affichePlainte(){
-      $plaintes = Plainte::with('user:id,tel')
-         ->where('commune', $user->commune)
-        ->where('examen', 'non examiner')
-        ->select('id','code',  'examiner', 'user_id','date')
-        ->get();
+
+
+public function afficherHistory()
+{
+    $user = auth()->user();
+    // Récupérer uniquement les plaintes appartenant à cet utilisateur
+    $plaintes = Plainte::where('user_id', $user->id)
+        ->select(['code', 'commune', 'image', 'examiner'])
+        ->get()
+        ->map(function ($plainte) {
+            return [
+                'commune'  => $plainte->commune,
+                'examiner' => $plainte->examiner,
+                'image'    => $plainte->image,
+                'code'     => $plainte->code,
+            ];
+        });
+  return response()->json($plaintes);
 }
+
 
 }
 

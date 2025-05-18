@@ -76,22 +76,25 @@ class RegisterUserController extends Controller
         return response()->json($success,200); 
 
     }
+//deconnexion de lutilisateur
     public function logout(Request $request){
         // Supprimer le token de l'utilisateur connecté
         $request->user()->tokens()->delete();
         return response()->json(['message' => 'Déconnexion réussie'], 200);
     }
-
-
+//affichage  tous les users
+ public function afficherUsers(){
+   $users = User::all(['id','name', 'tel','nni','signal','commune','role']);
+    return response()->json($users);
+   }
+//affiche une seule user 
     public function afficherUser($id){
     $user = User::select(['id','name', 'tel','nni','signal','commune',"created_at"])
                 ->where('id', $id)
                 ->first();
-
-    if (!$user) {
+       if (!$user) {
         return response()->json(['message' => 'Utilisateur non trouvé'], 404);
+             }
+     return response()->json($user);
     }
-
-    return response()->json($user);
-   }
 }

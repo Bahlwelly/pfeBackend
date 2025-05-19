@@ -97,4 +97,13 @@ class RegisterUserController extends Controller
              }
      return response()->json($user);
     }
+//supprimer une seule user
+ public function supprimerUser($id){
+    $user = User::find($id); // Recherche de l'utilisateur
+    if ($user) {
+        $user->delete(); // Suppression de l'utilisateur
+        return response()->json(['message' => 'Utilisateur supprimé avec succès']);
+    }
+    return response()->json(['message' => 'Utilisateur non trouvé'], 404);
+}
 }

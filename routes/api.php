@@ -39,8 +39,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('recuperePlainte', [PlainteController::class, 'recuperePlainte']);
      Route::get('myhistory',[PlainteController::class,'afficherHistory']);
     Route::post('logout',[RegisterUserController::class,'logout']);
-
-
 });
 
 //utiliser par ladmin////////////////////////////////////////////////////////////////////////////
@@ -51,9 +49,11 @@ Route::prefix('afficher/')->name('afficher.')->group(function (){
   //afficher tous lesplaintes
   Route::get('plainte',[PlainteController::class,'afficherPlainte']);
 });
+//supprimer user
+Route::delete('supprimer/{id}',[RegisterUserController::class,'supprimerUser']);
 
 //Login pour Admin
-Route::post('loginAdmin',[AdminController::class,'login']);
+Route::get('loginAdmin',[AdminController::class,'login']);
 
 //modifier colonne signal
 Route::put('signal/{id}', [SignalController::class, 'updateSignal']);

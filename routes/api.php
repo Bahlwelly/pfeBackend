@@ -39,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('recuperePlainte', [PlainteController::class, 'recuperePlainte']);
      Route::get('myhistory',[PlainteController::class,'afficherHistory']);
     Route::post('logout',[RegisterUserController::class,'logout']);
+    Route::post('donneeUser',[RegisterUserController::class,'utilisateurConnecter']);
 });
 
 //utiliser par ladmin////////////////////////////////////////////////////////////////////////////

@@ -106,4 +106,16 @@ class RegisterUserController extends Controller
     }
     return response()->json(['message' => 'Utilisateur non trouvé'], 404);
 }
+
+
+public function utilisateurConnecter(){
+   $user = auth()->user();
+    $userData = User::select(['name', 'tel','nni','signal'])
+                ->where('id', $user->id)
+                ->first();
+       if (!$userData) {
+        return response()->json(['message' => 'Utilisateur non trouvé'], 404);
+             }
+     return response()->json($userData);
+}
 }

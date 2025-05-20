@@ -17,6 +17,9 @@ class LoginUserController extends Controller
         ];
         if(auth()->attempt($donnee)){
             $user=Auth::user();
+            if($user->blocquee=="blocquee"){
+                 return response()->json(['error' => 'Votre compte est bloqué'], 403);
+            }
             $user->tokens()->delete();
             $success['name']=$user->name;
             $success['token']=$user->createToken(request()->userAgent())->plainTextToken;

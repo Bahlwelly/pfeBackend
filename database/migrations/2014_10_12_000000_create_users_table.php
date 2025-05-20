@@ -20,6 +20,7 @@ return new class extends Migration
             $table->bigInteger('nni')->unique()->nullable();
             $table->bigInteger('tel')->unique();
             $table->string('commune')->nullable();
+            $table->string('blocquee')->nullable();
             $table->integer('code')->nullable();
             $table->dateTime('code_expire_at')->nullable();
             $table->rememberToken();

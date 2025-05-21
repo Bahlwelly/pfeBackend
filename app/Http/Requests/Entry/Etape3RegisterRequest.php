@@ -26,7 +26,6 @@ class Etape3RegisterRequest extends FormRequest
             'password' => 'required|min:4|max:4|confirmed', 
             'nni' => 'required|numeric|digits:10|unique:users,nni',
             'tel' => 'required|digits:8|numeric|exists:users,tel',
-            'commune'=>'required|string'
            
         ];
     }
@@ -44,7 +43,7 @@ class Etape3RegisterRequest extends FormRequest
             'nni.unique' => 'Ce NNI est déjà enregistré.',
             'nni.digits' => 'Le NNI doit contenir exactement 10 chiffres.',
             'tel.exists' => 'Ce numéro de téléphone n\'est pas enregistré.',
-            'commune.rerquired'=>'commune est obligatoire'
+            
             
         ];
     }

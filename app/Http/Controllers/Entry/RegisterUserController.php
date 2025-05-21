@@ -58,12 +58,11 @@ class RegisterUserController extends Controller
     public function registerComplete(Etape3RegisterRequest $request)
     {
         $user = User::where('tel', $request->tel)->first();
-
         $user->timestamps = false; 
         $user->name = $request->name;
         $user->nni = $request->nni;
-        $user->commune = $request->commune;
         $user->role = "CITOYEN";
+        $user->blocquee = "non blocquee";
         $user->password = Hash::make($request->password);
         $user->save();
 
